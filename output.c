@@ -1,7 +1,7 @@
 #include "output.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include // jo bhi impelemenation of list wali file ka name hoga
+#include //Name of final list
 
 void displayStudentAllocations(StudentNode *head, int count)
  {
@@ -63,4 +63,5 @@ void exportResultsToFile(StudentNode *head, const char *filename) {
     }
 
     fclose(fp);
+
 }
