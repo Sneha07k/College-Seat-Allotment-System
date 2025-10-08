@@ -36,12 +36,7 @@ void heapify(Student students[], int n, int i);
 Student extractTop(Student students[], int *n);
 
 
-bool allocateSeat(Student *student, College colleges[], int collegeCount);
-void allocateSeats(Student students[], int studentCount, College colleges[], int collegeCount);
 
-
-void updateSeatMatrix(Student *student, College colleges[], int collegeCount);
-
-void generateResults(Student students[], int studentCount, College colleges[], int collegeCount);
 
 #endif
+
