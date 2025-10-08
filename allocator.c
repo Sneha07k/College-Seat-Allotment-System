@@ -84,46 +84,6 @@ void allocateSeats(Student students[], int studentCount, College colleges[], int
 
 
 
-void updateSeatMatrix(Student *student, College colleges[], int collegeCount) {
-    for (int i = 0; i < collegeCount; i++) {
-        if (strcmp(colleges[i].name, student->allottedCollege) == 0) {
-            if (strcmp(student->category, "GEN") == 0 && colleges[i].generalSeats > 0)
-                colleges[i].generalSeats--;
-            else if (strcmp(student->category, "OBC") == 0 && colleges[i].obcSeats > 0)
-                colleges[i].obcSeats--;
-            else if (strcmp(student->category, "SC") == 0 && colleges[i].scSeats > 0)
-                colleges[i].scSeats--;
-            else if (strcmp(student->category, "ST") == 0 && colleges[i].stSeats > 0)
-                colleges[i].stSeats--;
-            colleges[i].totalSeats--;
-            break;
-        }
-    }
+
 }
 
-
-
-void generateResults(Student students[], int studentCount, College colleges[], int collegeCount) {
-    printf("\n=== FINAL SEAT ALLOCATION RESULTS ===\n");
-    printf("-------------------------------------\n");
-    for (int i = 0; i < studentCount; i++) {
-        printf("Student: %-10s | Rank: %d | Category: %-3s | Allotted: ",
-               students[i].name, students[i].rank, students[i].category);
-        if (students[i].isAllotted)
-            printf("%s\n", students[i].allottedCollege);
-        else
-            printf("Not Allotted\n");
-    }
-
-    printf("\n=== REMAINING SEATS IN COLLEGES ===\n");
-    printf("-------------------------------------\n");
-    for (int i = 0; i < collegeCount; i++) {
-        printf("%-10s -> GEN:%d OBC:%d SC:%d ST:%d | Total:%d\n",
-               colleges[i].name,
-               colleges[i].generalSeats,
-               colleges[i].obcSeats,
-               colleges[i].scSeats,
-               colleges[i].stSeats,
-               colleges[i].totalSeats);
-    }
-}
