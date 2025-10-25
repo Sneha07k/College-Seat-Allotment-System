@@ -1,10 +1,8 @@
-//allocator.c
-
 #include "common.h"
 #include <stdlib.h>
 #include <string.h>
 
-/* Eligibility */
+
 int is_eligible(const Student *s, const CollegeRow *r) {
     if(!r) return 0;
     if(r->Opening_R==0 && r->Closing_R==0) return 0;
@@ -16,7 +14,7 @@ int is_eligible(const Student *s, const CollegeRow *r) {
     return 0;
 }
 
-/* Preference score */
+
 int compute_prefscore(const Student *s,const CollegeRow *r){
     if(s->pref_count>0 && s->priorities){
         for(int i=0;i<s->pref_count;i++)
@@ -25,7 +23,7 @@ int compute_prefscore(const Student *s,const CollegeRow *r){
     return 1000 + r->Closing_R;
 }
 
-/* Build offers */
+
 Offer* build_offers(const Student *s, CollegeRow *rows,int nrows,int *out_offers){
     *out_offers=0;
     Offer *buf=malloc(sizeof(Offer)*nrows);
@@ -51,7 +49,7 @@ Offer* build_offers(const Student *s, CollegeRow *rows,int nrows,int *out_offers
     return buf;
 }
 
-/* Heap insert */
+
 HeapNode* heap_insert(HeapNode *root, Student s, Offer *offers, int offer_count){
     HeapNode *node=malloc(sizeof(HeapNode));
     node->student=s;
@@ -68,7 +66,7 @@ HeapNode* heap_insert(HeapNode *root, Student s, Offer *offers, int offer_count)
     return root;
 }
 
-/* Heap pop (simplified) */
+
 HeapNode* heap_pop(HeapNode **root){
     if(!root || !*root) return NULL;
     HeapNode *top=*root;
@@ -78,7 +76,6 @@ HeapNode* heap_pop(HeapNode **root){
     return top;
 }
 
-/* Free heap */
 void free_heap(HeapNode *root){
     if(!root) return;
     free_heap(root->left);
@@ -87,7 +84,7 @@ void free_heap(HeapNode *root){
     free(root);
 }
 
-/* Free student priorities */
+
 void free_student(Student *s){
     if(!s) return;
     if(s->priorities){
