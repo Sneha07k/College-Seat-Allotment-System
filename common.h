@@ -1,4 +1,3 @@
-//common.h
 #ifndef COMMON_H
 #define COMMON_H
 
@@ -24,17 +23,19 @@ typedef struct {
     int jee_rank;
     int age;
     char gender[16];
-    char aadhaar[16];
+    char aadhaar[32];
     char email[64];
     char phone[16];
-    char **priorities; // preferred institutes
+    char exam_number[32];
+    char reservation[32];
+    char **priorities; 
     int pref_count;
 } Student;
 
 typedef enum { OFFER_PENDING, OFFER_FLOATED, OFFER_FROZEN, OFFER_SLID } OfferStatus;
 
 typedef struct {
-    int idx; // index in college array
+    int idx; 
     CollegeRow row;
     int prefScore;
     OfferStatus status;
@@ -47,16 +48,20 @@ typedef struct HeapNode {
     struct HeapNode *left, *right;
 } HeapNode;
 
-/* CSV input/output */
+
 CollegeRow* read_college_csv(const char *path, int *out_count);
 int write_college_csv(const char *path, CollegeRow *rows, int count);
 
-/* Heap operations */
+
+int append_allocation_txt(const char *path, const char *aadhaar, const char *student_name, const Offer *o);
+
+int user_signup(const char *users_txt, const char *name, const char *aadhaar, const char *password);
+int user_login(const char *users_txt, const char *aadhaar, const char *password);
+
 HeapNode* heap_insert(HeapNode *root, Student s, Offer *offers, int offer_count);
 HeapNode* heap_pop(HeapNode **root);
 void free_heap(HeapNode *root);
 
-/* Allocation helpers */
 int is_eligible(const Student *s, const CollegeRow *r);
 int compute_prefscore(const Student *s, const CollegeRow *r);
 Offer* build_offers(const Student *s, CollegeRow *rows, int nrows, int *out_offers);
