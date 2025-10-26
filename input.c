@@ -28,12 +28,12 @@ CollegeRow* read_college_csv(const char *path, int *out_count) {
     *out_count=0;
     FILE *f = fopen(path,"r");
     if(!f){ perror("open csv"); return NULL; }
-    char line[4096];
+    char line[8192];
     if(!fgets(line,sizeof(line),f)){ fclose(f); return NULL; }
 
-    char *cols[64]; int colc=0;
+    char *cols[128]; int colc=0;
     char *tok=strtok(line,",\n\r");
-    while(tok && colc<64){ trim(tok); cols[colc++]=my_strdup(tok); tok=strtok(NULL,",\n\r"); }
+    while(tok && colc<128){ trim(tok); cols[colc++]=my_strdup(tok); tok=strtok(NULL,",\n\r"); }
 
     int idx_Institute = find_index(cols,colc,"Institute");
     int idx_Quota = find_index(cols,colc,"Quota");
@@ -51,9 +51,9 @@ CollegeRow* read_college_csv(const char *path, int *out_count) {
 
     while(fgets(line,sizeof(line),f)){
         if(strlen(line)<=1) continue;
-        char *cells[64]; int cc=0;
+        char *cells[128]; int cc=0;
         char *p=strtok(line,",\n\r");
-        while(p && cc<64){ trim(p); cells[cc++]=p; p=strtok(NULL,",\n\r"); }
+        while(p && cc<128){ trim(p); cells[cc++]=p; p=strtok(NULL,",\n\r"); }
 
         CollegeRow r; memset(&r,0,sizeof(r));
         if(idx_Institute<cc) strncpy(r.Institute,cells[idx_Institute],MAX_STR-1);
@@ -85,4 +85,52 @@ int write_college_csv(const char *path, CollegeRow *rows, int count) {
             rows[i].Seat_Type, rows[i].Seats_left);
     fclose(f);
     return 1;
+}
+
+int append_allocation_txt(const char *path, const char *aadhaar, const char *student_name, const Offer *o) {
+    FILE *f = fopen(path, "a");
+    if(!f) return 0;
+    const char *status = (o->status==OFFER_FROZEN)? "FROZEN" :
+                         (o->status==OFFER_FLOATED)? "FLOATED" :
+                         (o->status==OFFER_SLID)? "SLID" : "PENDING";
+    fprintf(f, "Aadhaar:%s\nStudent:%s\nInstitute:%s\nCourse:%s\nStatus:%s\n---\n",
+            aadhaar ? aadhaar : "", student_name ? student_name : "",
+            o->row.Institute, o->row.Academic, status);
+    fclose(f);
+    return 1;
+}
+
+
+int user_signup(const char *users_csv, const char *name, const char *aadhaar, const char *password) {
+    
+    FILE *f = fopen(users_csv, "r");
+    char line[512];
+    if(f){
+        while(fgets(line,sizeof(line),f)){
+            char *p = strtok(line, ",\n\r"); // name
+            char *a = strtok(NULL, ",\n\r");
+            if(a && strcmp(a,aadhaar)==0){ fclose(f); return 0; }
+        }
+        fclose(f);
+    }
+
+    f = fopen(users_csv, "a");
+    if(!f) return 0;
+    fprintf(f, "%s,%s,%s\n", name, aadhaar, password);
+    fclose(f);
+    return 1;
+}
+
+int user_login(const char *users_csv, const char *aadhaar, const char *password) {
+    FILE *f = fopen(users_csv, "r");
+    if(!f) return 0;
+    char line[512];
+    while(fgets(line,sizeof(line),f)){
+        char *name = strtok(line, ",\n\r");
+        char *a = strtok(NULL, ",\n\r");
+        char *p = strtok(NULL, ",\n\r");
+        if(a && p && strcmp(a,aadhaar)==0 && strcmp(p,password)==0){ fclose(f); return 1; }
+    }
+    fclose(f);
+    return 0;
 }
